@@ -1,6 +1,6 @@
 <?php
 // Include config file
-require_once "config.php";
+require_once "../includes/config.php";
 
 // Check if user is logged in and has developer role
 require_role([ROLE_DEVELOPER]);
@@ -216,16 +216,16 @@ if(file_exists("backups/")) {
                         <a class="nav-link" href="index.php">
                             <i class="fa fa-dashboard"></i> Dashboard
                         </a>
-                        <a class="nav-link" href="patients.php">
+                        <a class="nav-link" href="views/patients/patients.php">
                             <i class="fa fa-users"></i> Patients
                         </a>
-                        <a class="nav-link" href="appointments.php">
+                        <a class="nav-link" href="views/appointments/appointments.php">
                             <i class="fa fa-calendar"></i> Appointments
                         </a>
-                        <a class="nav-link" href="billing.php">
+                        <a class="nav-link" href="views/billing/billing.php">
                             <i class="fa fa-file-text"></i> Billing
                         </a>
-                        <a class="nav-link" href="transactions.php">
+                        <a class="nav-link" href="views/transactions/transactions.php">
                             <i class="fa fa-money"></i> Transactions
                         </a>
                         <a class="nav-link" href="reports.php">

@@ -1,6 +1,6 @@
 <?php
 // Manual user creation script
-require_once "config.php";
+require_once "../includes/config.php";
 
 // Create database if it doesn't exist
 $sql = "CREATE DATABASE IF NOT EXISTS patient_dbms CHARACTER SET utf8 COLLATE utf8_general_ci";

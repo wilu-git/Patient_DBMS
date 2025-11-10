@@ -1,6 +1,6 @@
 <?php
 // Include config file
-require_once "config.php";
+require_once "../../../includes/config.php";
 
 // Check if user is logged in
 require_login();
@@ -49,7 +49,7 @@ if(isset($_GET["id"]) && !empty(trim($_GET["id"]))){
                 $updated_at = $row["updated_at"];
             } else{
                 // URL doesn't contain valid id parameter. Redirect to error page
-                header("location: error.php");
+                header("location: ../../error.php");
                 exit();
             }
             
@@ -65,7 +65,7 @@ if(isset($_GET["id"]) && !empty(trim($_GET["id"]))){
     $mysqli->close();
 } else{
     // URL doesn't contain id parameter. Redirect to error page
-    header("location: error.php");
+    header("location: ../../error.php");
     exit();
 }
 ?>
@@ -124,7 +124,7 @@ if(isset($_GET["id"]) && !empty(trim($_GET["id"]))){
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="index.php">
+            <a class="navbar-brand" href="../../index.php">
                 <i class="fa fa-user-md"></i> Patient DBMS
             </a>
             <div class="navbar-nav ml-auto">
@@ -136,7 +136,7 @@ if(isset($_GET["id"]) && !empty(trim($_GET["id"]))){
                         <a class="dropdown-item" href="profile.php"><i class="fa fa-user"></i> Profile</a>
                         <a class="dropdown-item" href="change_password.php"><i class="fa fa-key"></i> Change Password</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="logout.php"><i class="fa fa-sign-out"></i> Logout</a>
+                        <a class="dropdown-item" href="../../logout.php"><i class="fa fa-sign-out"></i> Logout</a>
                     </div>
                 </div>
             </div>
@@ -149,19 +149,19 @@ if(isset($_GET["id"]) && !empty(trim($_GET["id"]))){
             <div class="col-md-2 p-0">
                 <div class="sidebar">
                     <nav class="nav flex-column">
-                        <a class="nav-link" href="index.php">
+                        <a class="nav-link" href="../../index.php">
                             <i class="fa fa-dashboard"></i> Dashboard
                         </a>
-                        <a class="nav-link active" href="patients.php">
+                        <a class="nav-link active" href="../patients/patients.php">
                             <i class="fa fa-users"></i> Patients
                         </a>
-                        <a class="nav-link" href="appointments.php">
+                        <a class="nav-link" href="../appointments/appointments.php">
                             <i class="fa fa-calendar"></i> Appointments
                         </a>
-                        <a class="nav-link" href="billing.php">
+                        <a class="nav-link" href="../billing/billing.php">
                             <i class="fa fa-file-text"></i> Billing
                         </a>
-                        <a class="nav-link" href="transactions.php">
+                        <a class="nav-link" href="../transactions/transactions.php">
                             <i class="fa fa-money"></i> Transactions
                         </a>
                     </nav>
@@ -177,7 +177,7 @@ if(isset($_GET["id"]) && !empty(trim($_GET["id"]))){
                             <a href="patient_update.php?id=<?php echo trim($_GET["id"]); ?>" class="btn btn-warning">
                                 <i class="fa fa-pencil"></i> Edit Patient
                             </a>
-                            <a href="patients.php" class="btn btn-secondary">
+                            <a href="../patients/patients.php" class="btn btn-secondary">
                                 <i class="fa fa-arrow-left"></i> Back to Patients
                             </a>
                         </div>
