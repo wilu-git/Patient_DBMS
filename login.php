@@ -46,8 +46,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     $stmt->bind_result($id, $username, $hashed_password, $role, $full_name, $is_active);
                     if($stmt->fetch()){
                         if(password_verify($password, $hashed_password)){
-                            // Password is correct, so start a new session
-                            session_start();
+                            // Password is correct, session already started in config.php
                             
                             // Store data in session variables
                             $_SESSION["loggedin"] = true;
