@@ -155,7 +155,7 @@ $mysqli->close();
                         </div>
 
                         <div class="text-center mt-4">
-                            <a href="login.php" class="btn btn-primary btn-lg">
+                            <a href="../public/login.php" class="btn btn-primary btn-lg">
                                 <i class="fa fa-sign-in"></i> Go to Login
                             </a>
                             <a href="diagnose.php" class="btn btn-outline-secondary btn-lg ml-2">

@@ -148,7 +148,7 @@
                         </div>
                         
                         <div class="text-center">
-                            <a href="login.php" class="btn btn-success">
+                            <a href="../public/login.php" class="btn btn-success">
                                 <i class="fa fa-sign-in"></i> Try Login Again
                             </a>
                             <a href="setup.php" class="btn btn-primary">

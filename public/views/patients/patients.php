@@ -1,6 +1,6 @@
 <?php
 // Include config file
-require_once "config.php";
+require_once "../../../includes/config.php";
 
 // Check if user is logged in
 require_login();
@@ -79,7 +79,7 @@ $result = $mysqli->query($sql);
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="index.php">
+            <a class="navbar-brand" href="../../index.php">
                 <i class="fa fa-user-md"></i> Patient DBMS
             </a>
             <div class="navbar-nav ml-auto">
@@ -91,7 +91,7 @@ $result = $mysqli->query($sql);
                         <a class="dropdown-item" href="profile.php"><i class="fa fa-user"></i> Profile</a>
                         <a class="dropdown-item" href="change_password.php"><i class="fa fa-key"></i> Change Password</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="logout.php"><i class="fa fa-sign-out"></i> Logout</a>
+                        <a class="dropdown-item" href="../../logout.php"><i class="fa fa-sign-out"></i> Logout</a>
                     </div>
                 </div>
             </div>
@@ -104,19 +104,19 @@ $result = $mysqli->query($sql);
             <div class="col-md-2 p-0">
                 <div class="sidebar">
                     <nav class="nav flex-column">
-                        <a class="nav-link" href="index.php">
+                        <a class="nav-link" href="../../index.php">
                             <i class="fa fa-dashboard"></i> Dashboard
                         </a>
-                        <a class="nav-link active" href="patients.php">
+                        <a class="nav-link active" href="../patients/patients.php">
                             <i class="fa fa-users"></i> Patients
                         </a>
-                        <a class="nav-link" href="appointments.php">
+                        <a class="nav-link" href="../appointments/appointments.php">
                             <i class="fa fa-calendar"></i> Appointments
                         </a>
-                        <a class="nav-link" href="billing.php">
+                        <a class="nav-link" href="../billing/billing.php">
                             <i class="fa fa-file-text"></i> Billing
                         </a>
-                        <a class="nav-link" href="transactions.php">
+                        <a class="nav-link" href="../transactions/transactions.php">
                             <i class="fa fa-money"></i> Transactions
                         </a>
                         <?php if(in_array($user_role, [ROLE_ACCOUNTANT, ROLE_DEVELOPER])): ?>
@@ -128,7 +128,7 @@ $result = $mysqli->query($sql);
                         <a class="nav-link" href="users.php">
                             <i class="fa fa-users-cog"></i> User Management
                         </a>
-                        <a class="nav-link" href="backup.php">
+                        <a class="nav-link" href="../../backup.php">
                             <i class="fa fa-database"></i> Backup
                         </a>
                         <?php endif; ?>

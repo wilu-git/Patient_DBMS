@@ -1,6 +1,6 @@
 <?php
 // Include config file
-require_once "config.php";
+require_once "../../../includes/config.php";
 
 // Check if user is logged in
 require_login();
@@ -136,7 +136,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                 }
                 
                 // Records updated successfully. Redirect to landing page
-                header("location: patients.php");
+                header("location: ../patients/patients.php");
                 exit();
             } else{
                 echo "Oops! Something went wrong. Please try again later.";
@@ -190,7 +190,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                     $insurance_number = $row["insurance_number"];
                 } else{
                     // URL doesn't contain valid id. Redirect to error page
-                    header("location: error.php");
+                    header("location: ../../error.php");
                     exit();
                 }
                 
@@ -206,7 +206,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
         $mysqli->close();
     }  else{
         // URL doesn't contain id parameter. Redirect to error page
-        header("location: error.php");
+        header("location: ../../error.php");
         exit();
     }
 }
@@ -259,7 +259,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="index.php">
+            <a class="navbar-brand" href="../../index.php">
                 <i class="fa fa-user-md"></i> Patient DBMS
             </a>
             <div class="navbar-nav ml-auto">
@@ -271,7 +271,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                         <a class="dropdown-item" href="profile.php"><i class="fa fa-user"></i> Profile</a>
                         <a class="dropdown-item" href="change_password.php"><i class="fa fa-key"></i> Change Password</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="logout.php"><i class="fa fa-sign-out"></i> Logout</a>
+                        <a class="dropdown-item" href="../../logout.php"><i class="fa fa-sign-out"></i> Logout</a>
                     </div>
                 </div>
             </div>
@@ -284,19 +284,19 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
             <div class="col-md-2 p-0">
                 <div class="sidebar">
                     <nav class="nav flex-column">
-                        <a class="nav-link" href="index.php">
+                        <a class="nav-link" href="../../index.php">
                             <i class="fa fa-dashboard"></i> Dashboard
                         </a>
-                        <a class="nav-link active" href="patients.php">
+                        <a class="nav-link active" href="../patients/patients.php">
                             <i class="fa fa-users"></i> Patients
                         </a>
-                        <a class="nav-link" href="appointments.php">
+                        <a class="nav-link" href="../appointments/appointments.php">
                             <i class="fa fa-calendar"></i> Appointments
                         </a>
-                        <a class="nav-link" href="billing.php">
+                        <a class="nav-link" href="../billing/billing.php">
                             <i class="fa fa-file-text"></i> Billing
                         </a>
-                        <a class="nav-link" href="transactions.php">
+                        <a class="nav-link" href="../transactions/transactions.php">
                             <i class="fa fa-money"></i> Transactions
                         </a>
                     </nav>
@@ -427,7 +427,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                                 <div class="form-group">
                                     <input type="hidden" name="id" value="<?php echo $id; ?>"/>
                                     <input type="submit" class="btn btn-primary" value="Update Patient">
-                                    <a href="patients.php" class="btn btn-secondary ml-2">Cancel</a>
+                                    <a href="../patients/patients.php" class="btn btn-secondary ml-2">Cancel</a>
                                 </div>
                             </form>
                         </div>

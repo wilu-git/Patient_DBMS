@@ -104,7 +104,7 @@
                     </div>
 
                     <div class="text-center">
-                        <a href="login.php" class="btn btn-outline-primary">
+                        <a href="../public/login.php" class="btn btn-outline-primary">
                             <i class="fa fa-sign-in"></i> Go to Login Page
                         </a>
                     </div>

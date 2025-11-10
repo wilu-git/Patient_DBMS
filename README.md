@@ -6,6 +6,40 @@ A comprehensive clinic management system designed to track cashflow, manage pati
 
 This system addresses the critical need for transparent financial tracking in clinics, preventing overcharging and ensuring proper cashflow management. It provides different access levels for doctors, secretaries, developers, and accountants.
 
+## 📁 Project Structure
+
+The project follows PHP development best practices with organized folders:
+
+```
+Patient_DBMS/
+├── includes/           # Configuration and common includes
+│   └── config.php     # Database config, session management, helper functions
+├── public/            # Publicly accessible files
+│   ├── index.php     # Main dashboard
+│   ├── login.php     # Login page
+│   ├── logout.php    # Logout handler
+│   ├── backup.php    # Database backup utility
+│   ├── views/        # Feature-specific views
+│   │   ├── patients/      # Patient management (CRUD operations)
+│   │   ├── appointments/  # Appointment scheduling
+│   │   ├── billing/       # Billing and invoicing
+│   │   └── transactions/  # Payment transactions
+│   └── assets/       # Static assets (CSS, JS, images)
+├── setup/            # Installation and diagnostic scripts
+│   ├── database_setup.php    # Database installation
+│   ├── database_schema.sql   # Database schema
+│   ├── setup.php            # Setup wizard
+│   └── diagnose.php         # System diagnostics
+├── .htaccess         # Apache configuration and security rules
+└── README.md         # Documentation
+```
+
+### Design Principles:
+- **Separation of Concerns**: Configuration, views, and setup scripts are separated
+- **Security**: Sensitive files are protected via `.htaccess` rules
+- **Maintainability**: Organized structure makes it easy to locate and modify files
+- **Scalability**: Clear structure supports future feature additions
+
 ## 🚀 Features
 
 ### Core Features (MVP)
@@ -67,12 +101,12 @@ This system addresses the critical need for transparent financial tracking in cl
    - Start MySQL
 
 3. **Setup Database**
-   - Open your browser and navigate to: `http://localhost/Patient_DBMS/database_setup.php`
+   - Open your browser and navigate to: `http://localhost/Patient_DBMS/setup/database_setup.php`
    - This will create the database and all required tables
    - Default users will be created automatically
 
 4. **Access the System**
-   - Navigate to: `http://localhost/Patient_DBMS/login.php`
+   - Navigate to: `http://localhost/Patient_DBMS/` or `http://localhost/Patient_DBMS/public/login.php`
    - Use default credentials (see below)
 
 ### Default Login Credentials
@@ -326,14 +360,15 @@ COMMIT;
 ## 🔧 Customization & Extension
 
 ### Adding New Features
-1. **New User Roles**: Modify the role constants and permission checks
-2. **Additional Tables**: Follow the existing pattern for new entities
-3. **New Reports**: Create new PHP files following the existing structure
+1. **New User Roles**: Modify the role constants in `includes/config.php`
+2. **Additional Tables**: Follow the existing pattern in `setup/database_schema.sql`
+3. **New Reports**: Create new PHP files in appropriate `public/views/` subdirectory
 4. **API Integration**: Add REST API endpoints for mobile apps
 
 ### Styling & UI
 - The system uses Bootstrap 4 for responsive design
-- Custom CSS can be added to the existing stylesheets
+- Custom CSS can be added to `public/assets/css/`
+- Custom JavaScript can be added to `public/assets/js/`
 - Font Awesome icons are used throughout for better UX
 
 ## 🐛 Troubleshooting
@@ -342,21 +377,28 @@ COMMIT;
 
 1. **Database Connection Error**
    - Check if MySQL is running in XAMPP
-   - Verify database credentials in `config.php`
+   - Verify database credentials in `includes/config.php`
    - Ensure the database exists
 
 2. **Permission Denied Errors**
    - Check file permissions in the project directory
-   - Ensure Apache has read access to the files
+   - Ensure Apache has read access to all files
+   - Check `.htaccess` configuration
 
 3. **Session Issues**
    - Clear browser cookies and cache
    - Check PHP session configuration
+   - Verify session files are writable
 
 4. **Login Not Working**
    - Verify default credentials
    - Check if users table has data
-   - Run `database_setup.php` again if needed
+   - Run `setup/database_setup.php` again if needed
+
+5. **404 Errors After Reorganization**
+   - Clear browser cache
+   - Verify all file paths are updated correctly
+   - Check Apache mod_rewrite is enabled for `.htaccess`
 
 ## 📈 Future Enhancements
 

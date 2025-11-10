@@ -1,6 +1,6 @@
 <?php
 // Include config file
-require_once "config.php";
+require_once "../includes/config.php";
 
 // Check if user is logged in
 if (is_logged_in()) {
