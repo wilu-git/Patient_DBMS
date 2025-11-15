@@ -195,9 +195,6 @@ $result = $mysqli->query($sql);
                     } else{
                         echo '<div class="alert alert-info"><em>No patient records were found.</em></div>';
                     }
-                    
-                    // Close connection
-                    $mysqli->close();
                     ?>
                 </div>
             </div>

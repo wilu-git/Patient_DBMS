@@ -195,6 +195,46 @@ CREATE TABLE IF NOT EXISTS audit_log (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- =====================================================
+-- CREATE INDEXES FOR PERFORMANCE
+-- =====================================================
+
+-- Users table indexes
+CREATE INDEX idx_users_username ON users(username);
+CREATE INDEX idx_users_role ON users(role);
+CREATE INDEX idx_users_is_active ON users(is_active);
+
+-- Patients table indexes
+CREATE INDEX idx_patients_patient_id ON patients(patient_id);
+CREATE INDEX idx_patients_is_active ON patients(is_active);
+CREATE INDEX idx_patients_created_by ON patients(created_by);
+CREATE INDEX idx_patients_name ON patients(last_name, first_name);
+
+-- Appointments table indexes
+CREATE INDEX idx_appointments_appointment_id ON appointments(appointment_id);
+CREATE INDEX idx_appointments_patient_id ON appointments(patient_id);
+CREATE INDEX idx_appointments_doctor_id ON appointments(doctor_id);
+CREATE INDEX idx_appointments_date ON appointments(appointment_date);
+CREATE INDEX idx_appointments_status ON appointments(status);
+CREATE INDEX idx_appointments_date_status ON appointments(appointment_date, status);
+
+-- Billing table indexes
+CREATE INDEX idx_billing_bill_id ON billing(bill_id);
+CREATE INDEX idx_billing_patient_id ON billing(patient_id);
+CREATE INDEX idx_billing_payment_status ON billing(payment_status);
+CREATE INDEX idx_billing_date ON billing(billing_date);
+
+-- Transactions table indexes
+CREATE INDEX idx_transactions_transaction_id ON transactions(transaction_id);
+CREATE INDEX idx_transactions_billing_id ON transactions(billing_id);
+CREATE INDEX idx_transactions_payment_date ON transactions(payment_date);
+
+-- Audit log indexes
+CREATE INDEX idx_audit_user_id ON audit_log(user_id);
+CREATE INDEX idx_audit_action ON audit_log(action);
+CREATE INDEX idx_audit_created_at ON audit_log(created_at);
+CREATE INDEX idx_audit_table_record ON audit_log(table_name, record_id);
+
+-- =====================================================
 -- INSERT DEFAULT DATA
 -- =====================================================
 
