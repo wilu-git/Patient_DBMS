@@ -13,6 +13,11 @@ $patient_id_err = $first_name_err = $last_name_err = $date_of_birth_err = $gende
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
     
+    // Verify CSRF token
+    if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
+        die("Invalid CSRF token. Please try again.");
+    }
+    
     // Validate patient ID
     $input_patient_id = trim($_POST["patient_id"]);
     if(empty($input_patient_id)){
@@ -143,9 +148,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         // Close statement
         $stmt->close();
     }
-    
-    // Close connection
-    $mysqli->close();
 }
 ?>
 
@@ -249,6 +251,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         </div>
                         <div class="card-body">
                             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                                <?php echo csrf_token_field(); ?>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">

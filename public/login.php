@@ -9,22 +9,34 @@ $username_err = $password_err = $login_err = "";
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
     
+    // Verify CSRF token
+    if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
+        $login_err = "Invalid request. Please try again.";
+    }
+    
     // Check if username is empty
-    if(empty(trim($_POST["username"]))){
+    if(empty($login_err) && empty(trim($_POST["username"]))){
         $username_err = "Please enter username.";
-    } else{
+    } elseif(empty($login_err)) {
         $username = trim($_POST["username"]);
     }
     
     // Check if password is empty
-    if(empty(trim($_POST["password"]))){
+    if(empty($login_err) && empty(trim($_POST["password"]))){
         $password_err = "Please enter your password.";
-    } else{
+    } elseif(empty($login_err)) {
         $password = trim($_POST["password"]);
     }
     
+    // Check rate limiting
+    if(empty($login_err) && empty($username_err) && empty($password_err)){
+        if(!check_login_attempts($username)){
+            $login_err = "Too many failed login attempts. Please try again later.";
+        }
+    }
+    
     // Validate credentials
-    if(empty($username_err) && empty($password_err)){
+    if(empty($login_err) && empty($username_err) && empty($password_err)){
         // Prepare a select statement
         $sql = "SELECT id, username, password, role, full_name, is_active FROM users WHERE username = ? AND is_active = 1";
         
@@ -48,6 +60,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         if(password_verify($password, $hashed_password)){
                             // Password is correct, session already started in config.php
                             
+                            // Regenerate session ID to prevent session fixation
+                            session_regenerate_id(true);
+                            
                             // Store data in session variables
                             $_SESSION["loggedin"] = true;
                             $_SESSION["user_id"] = $id;
@@ -65,13 +80,18 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                             
                             // Redirect user to welcome page
                             header("location: index.php");
+                            exit();
                         } else{
-                            // Password is not valid, display a generic error message
+                            // Password is not valid, log failed attempt
+                            log_failed_login($username);
+                            // Display a generic error message
                             $login_err = "Invalid username or password.";
                         }
                     }
                 } else{
-                    // Username doesn't exist, display a generic error message
+                    // Username doesn't exist, log failed attempt
+                    log_failed_login($username);
+                    // Display a generic error message
                     $login_err = "Invalid username or password.";
                 }
             } else{
@@ -82,9 +102,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $stmt->close();
         }
     }
-    
-    // Close connection
-    $mysqli->close();
 }
 ?>
 
@@ -160,6 +177,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         ?>
                         
                         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                            <?php echo csrf_token_field(); ?>
                             <div class="form-group">
                                 <label><i class="fa fa-user"></i> Username</label>
                                 <input type="text" name="username" class="form-control <?php echo (!empty($username_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $username; ?>">

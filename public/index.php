@@ -213,7 +213,7 @@ $recent_transactions = $mysqli->query($sql);
                         <div class="col-md-3">
                             <div class="card stat-card">
                                 <div class="card-body text-center">
-                                    <i class="fa fa-dollar-sign fa-2x mb-2"></i>
+                                    <i class="fa fa-money fa-2x mb-2"></i>
                                     <div class="stat-number">$<?php echo number_format($stats['today_revenue'], 2); ?></div>
                                     <div>Today's Revenue</div>
                                 </div>
