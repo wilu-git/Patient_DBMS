@@ -52,7 +52,12 @@ if (session_status() == PHP_SESSION_NONE) {
     }
 }
 
-// Security functions
+/**
+ * Sanitize user input to prevent XSS attacks
+ * 
+ * @param string $data The input data to sanitize
+ * @return string The sanitized data
+ */
 function sanitize_input($data) {
     $data = trim($data);
     $data = stripslashes($data);
@@ -60,10 +65,20 @@ function sanitize_input($data) {
     return $data;
 }
 
+/**
+ * Check if user is currently logged in
+ * 
+ * @return bool True if user is logged in, false otherwise
+ */
 function is_logged_in() {
     return isset($_SESSION['user_id']) && isset($_SESSION['user_role']);
 }
 
+/**
+ * Require user to be logged in, redirect to login page if not
+ * 
+ * @return void
+ */
 function require_login() {
     if (!is_logged_in()) {
         // Determine if we're in a subdirectory
@@ -73,6 +88,12 @@ function require_login() {
     }
 }
 
+/**
+ * Require user to have specific role(s), redirect to unauthorized page if not
+ * 
+ * @param array $allowed_roles Array of allowed role strings
+ * @return void
+ */
 function require_role($allowed_roles) {
     require_login();
     if (!in_array($_SESSION['user_role'], $allowed_roles)) {
@@ -83,7 +104,11 @@ function require_role($allowed_roles) {
     }
 }
 
-// CSRF Protection functions
+/**
+ * Generate a CSRF token for form protection
+ * 
+ * @return string The CSRF token
+ */
 function generate_csrf_token() {
     if (!isset($_SESSION['csrf_token'])) {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
@@ -91,6 +116,12 @@ function generate_csrf_token() {
     return $_SESSION['csrf_token'];
 }
 
+/**
+ * Verify CSRF token from form submission
+ * 
+ * @param string $token The token to verify
+ * @return bool True if token is valid, false otherwise
+ */
 function verify_csrf_token($token) {
     if (!isset($_SESSION['csrf_token']) || !isset($token)) {
         return false;
@@ -98,17 +129,32 @@ function verify_csrf_token($token) {
     return hash_equals($_SESSION['csrf_token'], $token);
 }
 
+/**
+ * Generate hidden CSRF token field for forms
+ * 
+ * @return string HTML input field with CSRF token
+ */
 function csrf_token_field() {
     $token = generate_csrf_token();
     return '<input type="hidden" name="csrf_token" value="' . htmlspecialchars($token) . '">';
 }
 
-// Enhanced sanitization
+/**
+ * Enhanced output sanitization to prevent XSS
+ * 
+ * @param string $data The data to sanitize
+ * @return string The sanitized data safe for HTML output
+ */
 function sanitize_output($data) {
     return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
 }
 
-// Rate limiting for login attempts
+/**
+ * Check if user has exceeded login attempt limit
+ * 
+ * @param string $username The username attempting to login
+ * @return bool True if login attempts are within limit, false otherwise
+ */
 function check_login_attempts($username) {
     global $mysqli;
     
@@ -132,6 +178,12 @@ function check_login_attempts($username) {
     return true; // If query fails, allow login attempt
 }
 
+/**
+ * Log a failed login attempt
+ * 
+ * @param string $username The username that failed to login
+ * @return void
+ */
 function log_failed_login($username) {
     global $mysqli;
     
