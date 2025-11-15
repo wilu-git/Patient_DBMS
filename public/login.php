@@ -55,13 +55,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                             $_SESSION["user_role"] = $role;
                             $_SESSION["full_name"] = $full_name;
                             
-                            // Log the login
-                            $log_sql = "INSERT INTO audit_log (user_id, action, ip_address, user_agent) VALUES (?, 'LOGIN', ?, ?)";
-                            if($log_stmt = $mysqli->prepare($log_sql)){
-                                $log_stmt->bind_param("iss", $id, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT']);
-                                $log_stmt->execute();
-                                $log_stmt->close();
-                            }
+                            // Log the login using the helper function
+                            log_audit($mysqli, $id, 'LOGIN', 'users');
                             
                             // Redirect user to welcome page
                             header("location: index.php");
