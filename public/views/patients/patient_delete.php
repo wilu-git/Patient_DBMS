@@ -11,36 +11,56 @@ require_role([ROLE_DOCTOR, ROLE_SECRETARY, ROLE_DEVELOPER]);
 // Process delete operation after confirmation
 if(isset($_POST["id"]) && !empty($_POST["id"])){
     
-    // Prepare a soft delete statement (set is_active to 0 instead of hard delete)
-    $sql = "UPDATE patients SET is_active = 0 WHERE id = ?";
+    $param_id = trim($_POST["id"]);
     
-    if($stmt = $mysqli->prepare($sql)){
-        // Bind variables to the prepared statement as parameters
-        $stmt->bind_param("i", $param_id);
+    // Check if patient has related records (appointments, billing)
+    $check_sql = "SELECT 
+                    (SELECT COUNT(*) FROM appointments WHERE patient_id = ? AND status != 'Cancelled') as active_appointments,
+                    (SELECT COUNT(*) FROM billing WHERE patient_id = ? AND payment_status != 'Paid') as unpaid_bills";
+    
+    if($check_stmt = $mysqli->prepare($check_sql)){
+        $check_stmt->bind_param("ii", $param_id, $param_id);
+        $check_stmt->execute();
+        $check_result = $check_stmt->get_result();
+        $check_data = $check_result->fetch_assoc();
+        $check_stmt->close();
         
-        // Set parameters
-        $param_id = trim($_POST["id"]);
-        
-        // Attempt to execute the prepared statement
-        if($stmt->execute()){
-            // Log the action
-            $log_sql = "INSERT INTO audit_log (user_id, action, table_name, record_id) VALUES (?, 'DELETE', 'patients', ?)";
-            if($log_stmt = $mysqli->prepare($log_sql)){
-                $log_stmt->bind_param("ii", $_SESSION['user_id'], $param_id);
-                $log_stmt->execute();
-                $log_stmt->close();
+        if($check_data['active_appointments'] > 0 || $check_data['unpaid_bills'] > 0){
+            $error_msg = "Cannot delete patient. ";
+            if($check_data['active_appointments'] > 0){
+                $error_msg .= "Patient has {$check_data['active_appointments']} active appointment(s). ";
             }
-            
-            // Records deleted successfully. Redirect to landing page
-            header("location: ../patients/patients.php");
-            exit();
-        } else{
-            echo "Oops! Something went wrong. Please try again later.";
+            if($check_data['unpaid_bills'] > 0){
+                $error_msg .= "Patient has {$check_data['unpaid_bills']} unpaid bill(s). ";
+            }
+            $error_msg .= "Please resolve these before deleting.";
         }
     }
-     
-    // Close statement
-    $stmt->close();
+    
+    if(!isset($error_msg)){
+        // Prepare a soft delete statement (set is_active to 0 instead of hard delete)
+        $sql = "UPDATE patients SET is_active = 0 WHERE id = ?";
+        
+        if($stmt = $mysqli->prepare($sql)){
+            // Bind variables to the prepared statement as parameters
+            $stmt->bind_param("i", $param_id);
+            
+            // Attempt to execute the prepared statement
+            if($stmt->execute()){
+                // Log the action using the helper function
+                log_audit($mysqli, $_SESSION['user_id'], 'DELETE', 'patients', $param_id);
+                
+                // Records deleted successfully. Redirect to landing page
+                header("location: ../patients/patients.php");
+                exit();
+            } else{
+                echo "Oops! Something went wrong. Please try again later.";
+            }
+        }
+         
+        // Close statement
+        $stmt->close();
+    }
     
     // Close connection
     $mysqli->close();
@@ -170,6 +190,13 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                             <h4><i class="fa fa-trash"></i> Delete Patient</h4>
                         </div>
                         <div class="card-body">
+                            <?php if(isset($error_msg)): ?>
+                            <div class="alert alert-danger">
+                                <h5><i class="fa fa-exclamation-circle"></i> Cannot Delete Patient</h5>
+                                <p><?php echo htmlspecialchars($error_msg); ?></p>
+                                <a href="../patients/patients.php" class="btn btn-secondary">Back to Patients</a>
+                            </div>
+                            <?php else: ?>
                             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                                 <div class="alert alert-danger">
                                     <input type="hidden" name="id" value="<?php echo trim($_GET["id"]); ?>"/>
@@ -184,6 +211,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                                     </p>
                                 </div>
                             </form>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>

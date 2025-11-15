@@ -59,6 +59,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     $input_date_of_birth = trim($_POST["date_of_birth"]);
     if(empty($input_date_of_birth)){
         $date_of_birth_err = "Please enter a date of birth.";
+    } elseif(!validate_date($input_date_of_birth, false)){
+        $date_of_birth_err = "Please enter a valid date of birth (cannot be in the future).";
     } else{
         $date_of_birth = $input_date_of_birth;
     }
@@ -124,13 +126,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             
             // Attempt to execute the prepared statement
             if($stmt->execute()){
-                // Log the action
-                $log_sql = "INSERT INTO audit_log (user_id, action, table_name, record_id, new_values) VALUES (?, 'CREATE', 'patients', ?, ?)";
-                if($log_stmt = $mysqli->prepare($log_sql)){
-                    $log_stmt->bind_param("iis", $_SESSION['user_id'], $mysqli->insert_id, json_encode($_POST));
-                    $log_stmt->execute();
-                    $log_stmt->close();
-                }
+                $insert_id = $mysqli->insert_id;
+                
+                // Log the action using the helper function
+                log_audit($mysqli, $_SESSION['user_id'], 'CREATE', 'patients', $insert_id, null, $_POST);
                 
                 // Records created successfully. Redirect to landing page
                 header("location: ../patients/patients.php");

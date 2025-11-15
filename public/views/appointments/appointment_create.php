@@ -61,6 +61,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     $input_appointment_date = trim($_POST["appointment_date"]);
     if(empty($input_appointment_date)){
         $appointment_date_err = "Please enter an appointment date.";
+    } elseif(!validate_date($input_appointment_date, true)){
+        $appointment_date_err = "Please enter a valid appointment date.";
     } else{
         $appointment_date = $input_appointment_date;
     }
@@ -84,6 +86,20 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     // Get notes
     $notes = trim($_POST["notes"]);
     
+    // Check for duplicate appointment (same patient, doctor, date, and time)
+    if(empty($appointment_date_err) && empty($appointment_time_err) && !empty($patient_id) && !empty($doctor_id)){
+        $check_sql = "SELECT id FROM appointments WHERE patient_id = ? AND doctor_id = ? AND appointment_date = ? AND appointment_time = ? AND status != 'Cancelled'";
+        if($check_stmt = $mysqli->prepare($check_sql)){
+            $check_stmt->bind_param("iiss", $patient_id, $doctor_id, $appointment_date, $appointment_time);
+            $check_stmt->execute();
+            $check_stmt->store_result();
+            if($check_stmt->num_rows > 0){
+                $appointment_date_err = "This time slot is already booked for this patient and doctor.";
+            }
+            $check_stmt->close();
+        }
+    }
+    
     // Check input errors before inserting in database
     if(empty($appointment_id_err) && empty($patient_id_err) && empty($doctor_id_err) && empty($appointment_date_err) && empty($appointment_time_err) && empty($appointment_type_err)){
         // Prepare an insert statement
@@ -105,13 +121,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             
             // Attempt to execute the prepared statement
             if($stmt->execute()){
-                // Log the action
-                $log_sql = "INSERT INTO audit_log (user_id, action, table_name, record_id, new_values) VALUES (?, 'CREATE', 'appointments', ?, ?)";
-                if($log_stmt = $mysqli->prepare($log_sql)){
-                    $log_stmt->bind_param("iis", $_SESSION['user_id'], $mysqli->insert_id, json_encode($_POST));
-                    $log_stmt->execute();
-                    $log_stmt->close();
-                }
+                $insert_id = $mysqli->insert_id;
+                
+                // Log the action using the helper function
+                log_audit($mysqli, $_SESSION['user_id'], 'CREATE', 'appointments', $insert_id, null, $_POST);
                 
                 // Records created successfully. Redirect to landing page
                 header("location: ../appointments/appointments.php");

@@ -24,7 +24,10 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     is_active BOOLEAN DEFAULT TRUE,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    INDEX idx_username (username),
+    INDEX idx_role (role),
+    INDEX idx_is_active (is_active)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- =====================================================
@@ -51,7 +54,11 @@ CREATE TABLE IF NOT EXISTS patients (
     created_by INT(11),
     is_active BOOLEAN DEFAULT TRUE,
     PRIMARY KEY (id),
-    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_patient_id (patient_id),
+    INDEX idx_name (first_name, last_name),
+    INDEX idx_is_active (is_active),
+    INDEX idx_created_by (created_by)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- =====================================================
@@ -73,7 +80,13 @@ CREATE TABLE IF NOT EXISTS appointments (
     PRIMARY KEY (id),
     FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE,
     FOREIGN KEY (doctor_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_appointment_id (appointment_id),
+    INDEX idx_patient_id (patient_id),
+    INDEX idx_doctor_id (doctor_id),
+    INDEX idx_appointment_date (appointment_date),
+    INDEX idx_status (status),
+    INDEX idx_date_time (appointment_date, appointment_time)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- =====================================================
@@ -113,7 +126,12 @@ CREATE TABLE IF NOT EXISTS billing (
     PRIMARY KEY (id),
     FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE,
     FOREIGN KEY (appointment_id) REFERENCES appointments(id) ON DELETE SET NULL,
-    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_bill_id (bill_id),
+    INDEX idx_patient_id (patient_id),
+    INDEX idx_payment_status (payment_status),
+    INDEX idx_billing_date (billing_date),
+    INDEX idx_appointment_id (appointment_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- =====================================================
@@ -147,7 +165,11 @@ CREATE TABLE IF NOT EXISTS transactions (
     created_by INT(11),
     PRIMARY KEY (id),
     FOREIGN KEY (billing_id) REFERENCES billing(id) ON DELETE CASCADE,
-    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_transaction_id (transaction_id),
+    INDEX idx_billing_id (billing_id),
+    INDEX idx_payment_date (payment_date),
+    INDEX idx_payment_method (payment_method)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- =====================================================
@@ -165,7 +187,11 @@ CREATE TABLE IF NOT EXISTS audit_log (
     user_agent TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_user_id (user_id),
+    INDEX idx_action (action),
+    INDEX idx_table_name (table_name),
+    INDEX idx_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- =====================================================

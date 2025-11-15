@@ -67,6 +67,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     $input_billing_date = trim($_POST["billing_date"]);
     if(empty($input_billing_date)){
         $billing_date_err = "Please enter a billing date.";
+    } elseif(!validate_date($input_billing_date, true)){
+        $billing_date_err = "Please enter a valid billing date.";
     } else{
         $billing_date = $input_billing_date;
     }
@@ -74,6 +76,16 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     // Get other form data
     $appointment_id = trim($_POST["appointment_id"]) ?: null;
     $due_date = trim($_POST["due_date"]) ?: null;
+    
+    // Validate due date if provided
+    if(!empty($due_date)){
+        if(!validate_date($due_date, true)){
+            $billing_date_err = "Please enter a valid due date.";
+        } elseif($due_date < $billing_date){
+            $billing_date_err = "Due date cannot be before billing date.";
+        }
+    }
+    
     $notes = trim($_POST["notes"]);
     
     // Check input errors before inserting in database
@@ -98,13 +110,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             
             // Attempt to execute the prepared statement
             if($stmt->execute()){
-                // Log the action
-                $log_sql = "INSERT INTO audit_log (user_id, action, table_name, record_id, new_values) VALUES (?, 'CREATE', 'billing', ?, ?)";
-                if($log_stmt = $mysqli->prepare($log_sql)){
-                    $log_stmt->bind_param("iis", $_SESSION['user_id'], $mysqli->insert_id, json_encode($_POST));
-                    $log_stmt->execute();
-                    $log_stmt->close();
-                }
+                $insert_id = $mysqli->insert_id;
+                
+                // Log the action using the helper function
+                log_audit($mysqli, $_SESSION['user_id'], 'CREATE', 'billing', $insert_id, null, $_POST);
                 
                 // Records created successfully. Redirect to landing page
                 header("location: ../billing/billing.php");
